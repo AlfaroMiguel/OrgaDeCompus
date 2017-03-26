@@ -42,13 +42,14 @@ void encode(char* input, char* output){
 	char* source_code = malloc(sizeof(char)*4);
 	char* result = malloc(sizeof(char)*5);
 	int i;
-	char c;
-	while (true){
+	char c = fgetc(input_file);
+	while (c != EOF){
 		i = 0;
 		while (i < 3){
-			c = fgetc(input_file);
 			source_code[i] = c;
 			i++;
+			c = fgetc(input_file);
+			if(c == EOF) break;
 		}
 	
 		while (i < 3){
@@ -58,7 +59,6 @@ void encode(char* input, char* output){
 		printf("%s\n", source_code);
 		base64_encode(source_code, result);
 		fwrite(result, 1, 4, output_file);
-		if (c == EOF) break;
 	}
 }
 
