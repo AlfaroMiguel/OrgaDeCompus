@@ -27,13 +27,13 @@ void print_version(){
 FILE* get_input_file(char* input){
 	if (!input || !strcmp(input, "-"))
 		return stdin;
-	return fopen(input, "r");
+	return fopen(input, "rb");
 }
 
 FILE* get_output_file(char* output){
 	if (!output || !strcmp(output, "-"))
 		return stdout;
-	return fopen(output, "w");
+	return fopen(output, "wb");
 }
 
 void encode(char* input, char* output){
@@ -51,12 +51,10 @@ void encode(char* input, char* output){
 			c = fgetc(input_file);
 			if(c == EOF) break;
 		}
-	
 		while (i < 3){
 			source_code[i] = '\0';
 			i++;
 		}
-		printf("%s\n", source_code);
 		base64_encode(source_code, result);
 		fwrite(result, 1, 4, output_file);
 	}
@@ -71,13 +69,13 @@ void decode(char* input, char* output){
 	char c = fgetc(input_file);
 	while (c != EOF){
 		i = 0;
-		while (i < 3){
+		while (i < 4){
 			source_code[i] = c;
 			i++;
 			c = fgetc(input_file);
 			if(c == EOF) break;
 		}
-		while (i < 3){
+		while (i < 4){
 			source_code[i] = '=';
 			i++;
 		}
