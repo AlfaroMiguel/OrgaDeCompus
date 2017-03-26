@@ -3,10 +3,14 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
+#include <stdbool.h>
 
-#define EMPTYASCII '\0'
+/*DEFINICION CONSTANTES*/
+#define EMPTYBASE256 '\0'
 #define EMPTYBASE64 '='
 
+/*Tabla de simbolos Base64*/
 static const char base64_table[] = {
         'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
         'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
@@ -18,9 +22,19 @@ static const char base64_table[] = {
         '4', '5', '6', '7', '8', '9', '+', '/'
 };
 
-/*Recibe 3 caracteres en ASCII y los codifica a 4 Base64*/
+/*Recibe:
+ *       Buffer con 3 caracteres en Base256
+ *       Buffer para guardar el resultado de la codificacion
+ *
+ *Codifica el contenido en Base256 a Base64 y lo guarda en el buffer resultado*/
 void base64_encode(const char* source_code, char* result);
 
-void base64_decode(const char* source_code, char* result);
+/*Recibe:
+ *       Buffer conteniendo 4 bytes en Base64
+ *       Buffer de 3 bytes en Base256 para guardar el resultado
+ *
+ * Decodifica el contenido en Base64 y de ser una decodificacion existosa lo guarda
+ * en el buffer result y devuelve True. Sino, devuelve False*/
+bool base64_decode(const char* source_code, char* result);
 
 #endif
