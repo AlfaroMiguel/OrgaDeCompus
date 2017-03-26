@@ -39,8 +39,8 @@ FILE* get_output_file(char* output){
 void encode(char* input, char* output){
 	FILE* input_file = get_input_file(input);
 	FILE* output_file = get_output_file(output);
-	char* source_code = malloc(sizeof(char)*4);
-	char* result = malloc(sizeof(char)*5);
+	char* source_code = malloc(sizeof(char)*3);
+	char* result = malloc(sizeof(char)*4);
 	int i;
 	char c = fgetc(input_file);
 	while (c != EOF){
@@ -65,6 +65,29 @@ void encode(char* input, char* output){
 void decode(char* input, char* output){
 	FILE* input_file = get_input_file(input);
 	FILE* output_file = get_output_file(output);
+	char* source_code = malloc(sizeof(char)*4);
+	char* result = malloc(sizeof(char)*3);
+	int i;
+	char c = fgetc(input_file);
+	while (c != EOF){
+		i = 0;
+		while (i < 3){
+			source_code[i] = c;
+			i++;
+			c = fgetc(input_file);
+			if(c == EOF) break;
+		}
+		while (i < 3){
+			source_code[i] = '=';
+			i++;
+		}
+		bool success = base64_decode(source_code, result);
+		if (!success){
+			printf("error\n");
+			return;
+		}
+		fwrite(result, 1, 3, output_file);
+	}
 }
 
 int main(int argc, char* argv[]){
@@ -75,7 +98,7 @@ int main(int argc, char* argv[]){
 	if (rd->print_version)
 		print_version();
 	if (rd->is_decode){
-		//hacer decode
+		decode(rd->input, rd->output);
 	}
 	else if(!rd->error_flag){
 		encode(rd->input, rd->output);
