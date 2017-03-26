@@ -7,8 +7,6 @@ v1.0
 
 */
 
-#include <stdio.h>
-#include <string.h>
 #include "parser_tp0.h"
 
 #define VERSION1 "-V"
