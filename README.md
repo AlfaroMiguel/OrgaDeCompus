@@ -1,9 +1,9 @@
 # OrgaDeCompus
 TPs - Organización de computadoras - 1er Cuatrimestre 2017
 
-*Informe: https://www.overleaf.com/8715138fyzktgmsrwqc
+* Informe: https://www.overleaf.com/8715138fyzktgmsrwqc
 
-##DONE
+##Done
 
 - [x] Parser
 - [x] Funcion de encoding 3 bytes Base256 :arrow_right: Base64
