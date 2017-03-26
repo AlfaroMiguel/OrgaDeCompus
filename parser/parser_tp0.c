@@ -7,7 +7,6 @@ v1.0
 
 */
 
-#include <stdio.h>
 #include <string.h>
 #include "parser_tp0.h"
 
@@ -71,7 +70,7 @@ char set_output(run_data_t* rd, char* arg){
 
 
 
-void parse_cmd(run_data_t* rd, int argc, char** argv){
+void parse_cmd(run_data_t* rd, int argc, char* argv[]){
 	char went_wrong=0;	
 	for(int i = 1; i<argc; i++){	//parsing loop
 		if(!strcmp(argv[i],VERSION1) || !strcmp(argv[i],VERSION2)){ //version
@@ -102,11 +101,7 @@ void parse_cmd(run_data_t* rd, int argc, char** argv){
 					went_wrong=1;
 					break;
 			}
-			if(set_input(rd,argv[i+1])){
-					fprintf(stderr,INVALID_OPT,argv[i+1],"input");
-					went_wrong=1;
-					break;
-			}
+			rd->input = argv[i+1];
 			i++;
 			continue;
 		}
@@ -116,11 +111,7 @@ void parse_cmd(run_data_t* rd, int argc, char** argv){
 					went_wrong=1;
 					break;
 			}
-			if(set_output(rd,argv[i+1])){
-					fprintf(stderr,INVALID_OPT,argv[i+1],"output");
-					went_wrong=1;
-					break;
-			}
+			rd->output = argv[i+1];
 			i++;
 			continue;
 		}

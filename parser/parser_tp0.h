@@ -1,10 +1,12 @@
+#include <stdio.h>
+
 struct run_data {
 	char is_decode;
 	char print_help;
 	char print_version;
 	char error_flag;	
-	FILE* input;
-	FILE* output;
+	char* input;
+	char* output;
 };
 
 typedef struct run_data run_data_t;
@@ -23,4 +25,4 @@ char set_output(run_data_t* rd, char* arg);
 
 //Parse options given from cmd line
 //Should an error occur, prints it to stderr and sets print_help with stdout as output
-void parse_cmd(run_data_t* rd, int argc, char** argv);
+void parse_cmd(run_data_t* rd, int argc, char* argv[]);
