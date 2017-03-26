@@ -36,6 +36,13 @@ FILE* get_output_file(char* output){
 	return fopen(output, "wb");
 }
 
+void close_files(FILE* input, FILE* output){
+	if (input != stdin)
+		fclose(input);
+	if (output != stdout)
+		fclose(output);
+}
+
 void encode(char* input, char* output){
 	FILE* input_file = get_input_file(input);
 	FILE* output_file = get_output_file(output);
@@ -58,6 +65,9 @@ void encode(char* input, char* output){
 		base64_encode(source_code, result);
 		fwrite(result, 1, 4, output_file);
 	}
+	free(source_code);
+	free(result);
+	close_files(input_file, output_file);
 }
 
 void decode(char* input, char* output){
@@ -81,11 +91,14 @@ void decode(char* input, char* output){
 		}
 		bool success = base64_decode(source_code, result);
 		if (!success){
-			printf("error\n");
+			fprintf(stderr, "Decoding Error\n");
 			return;
 		}
 		fwrite(result, 1, 3, output_file);
 	}
+	free(source_code);
+	free(result);
+	close_files(input_file, output_file);
 }
 
 int main(int argc, char* argv[]){
@@ -101,6 +114,7 @@ int main(int argc, char* argv[]){
 	else if(!rd->error_flag){
 		encode(rd->input, rd->output);
 	}
+	else fprintf(stderr, "Argument Error\n");
 	free(rd);
 	return 0;
 }
