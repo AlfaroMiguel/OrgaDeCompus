@@ -27,7 +27,7 @@ static const char base64_table[] = {
  *       Buffer para guardar el resultado de la codificacion
  *
  *Codifica el contenido en Base256 a Base64 y lo guarda en el buffer resultado*/
-void base64_encode(const char* source_code, char* result);
+bool base64_encode(const char* source_code, char* result);
 
 /*Recibe:
  *       Buffer conteniendo 4 bytes en Base64

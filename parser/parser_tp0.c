@@ -36,8 +36,8 @@ void set_default(run_data_t* rd){
 	rd->is_decode = 0;
 	rd->print_help = 0;
 	rd->print_version = 0;
-	rd->input=stdin;
-	rd->output=stdout;
+	rd->input="-";
+	rd->output="-";
 }
 
 char set_action(run_data_t* rd, char* arg){
@@ -52,19 +52,19 @@ char set_action(run_data_t* rd, char* arg){
 	return 1;
 }
 
-char set_input(run_data_t* rd, char* arg){
-	FILE* aux_in = fopen(arg,"rb");
-	if (aux_in == NULL) return 1;
-	rd->input=aux_in;
-	return 0;
-}
+// char set_input(run_data_t* rd, char* arg){
+// 	FILE* aux_in = fopen(arg,"rb");
+// 	if (aux_in == NULL) return 1;
+// 	rd->input=aux_in;
+// 	return 0;
+// }
 
-char set_output(run_data_t* rd, char* arg){
-	FILE* aux_out = fopen(arg,"wb");
-	if (aux_out == NULL) return 1;
-	rd->output=aux_out;
-	return 0;
-}
+// char set_output(run_data_t* rd, char* arg){
+// 	FILE* aux_out = fopen(arg,"wb");
+// 	if (aux_out == NULL) return 1;
+// 	rd->output = aux_out;
+// 	return 0;
+// }
 
 //end:util
 

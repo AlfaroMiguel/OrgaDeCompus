@@ -1,6 +1,6 @@
 #include "base64.h"
 
-void base64_encode(const char* src, char* result){
+bool base64_encode(const char* src, char* result){
 
     result[0] = (src[0] & 0xfc) >> 2;
     result[1] = ((src[0] & 0x03) << 4) + ((src[1] & 0xf0) >> 4);
@@ -13,6 +13,7 @@ void base64_encode(const char* src, char* result){
         else
             result[i] = base64_table[(unsigned int)result[i]];
     }
+    return true;
 }
 
 
