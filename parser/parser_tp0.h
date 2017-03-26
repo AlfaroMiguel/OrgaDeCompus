@@ -1,5 +1,5 @@
 #include <stdio.h>
-
+#include <string.h>
 struct run_data {
 	char is_decode;
 	char print_help;
