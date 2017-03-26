@@ -1,6 +1,10 @@
 # OrgaDeCompus
 TPs - Organización de computadoras - 1er Cuatrimestre 2017
 
+* [Alfaro Miguel](https://github.com/AlfaroMiguel) :boy:
+* [Errazquin Martín](https://github.com/martinerrazquin) :boy:
+* [Mendez Agustina](https://github.com/abmendez) :girl:
+
 * Informe: https://www.overleaf.com/8715138fyzktgmsrwqc
 
 ##Done
