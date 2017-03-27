@@ -106,8 +106,10 @@ int main(int argc, char* argv[]){
 	parse_cmd(rd, argc, argv);
 	if (rd->print_help)
 		print_help();
-	if (rd->print_version)
+	if (rd->print_version){
 		print_version();
+		return 0;
+		}
 	if (rd->is_decode){
 		decode(rd->input, rd->output);
 	}
