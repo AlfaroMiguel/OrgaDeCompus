@@ -1,18 +1,25 @@
 #include "base64.h"
 
 bool base64_encode(const char* src, char* result){
+    int char_to_decode = 0;
+    for(int n = 0; n < 3; n++){
+        if(src[n] != EMPTYBASE256)
+            char_to_decode++;
+    }
 
     result[0] = (src[0] & 0xfc) >> 2;
     result[1] = ((src[0] & 0x03) << 4) + ((src[1] & 0xf0) >> 4);
     result[2] = ((src[1] & 0x0f) << 2) + ((src[2] & 0xc0) >> 6);
     result[3] = src[2] & 0x3f;
 
-    for (int i = 0; i < 4; ++i) {
-        if((unsigned int)result[i] == EMPTYBASE256)
-            result[i] = EMPTYBASE64;
-        else
+    for (int i = 0; i < char_to_decode+1; ++i) {
             result[i] = base64_table[(unsigned int)result[i]];
     }
+
+    for(int j = char_to_decode+1; j < 4; j++){
+        result[j] = EMPTYBASE64;
+    }
+
     return true;
 }
 
