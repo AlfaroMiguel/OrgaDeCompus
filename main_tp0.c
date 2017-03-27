@@ -48,22 +48,30 @@ void encode(char* input, char* output){
 	FILE* output_file = get_output_file(output);
 	char* source_code = malloc(sizeof(char)*3);
 	char* result = malloc(sizeof(char)*4);
-	int i;
-	char c = fgetc(input_file);
-	while (c != EOF){
+	int i, char_to_encode, j = 0;
+	char c;
+    fseek(input_file, 0, SEEK_END);
+    int len = ftell(input_file);
+    fseek(input_file, 0, SEEK_SET);
+	while (true){
 		i = 0;
+        char_to_encode = 0;
 		while (i < 3){
+            c = fgetc(input_file);
+            if(j >= len) break;
 			source_code[i] = c;
 			i++;
-			c = fgetc(input_file);
-			if(c == EOF) break;
+            j++;
+            char_to_encode++;
 		}
 		while (i < 3){
 			source_code[i] = '\0';
 			i++;
+            j++;
 		}
-		base64_encode(source_code, result);
+		base64_encode(source_code, result, char_to_encode);
 		fwrite(result, 1, 4, output_file);
+        if(j >=len)break;
 	}
 	free(source_code);
 	free(result);
@@ -75,29 +83,31 @@ void decode(char* input, char* output){
 	FILE* output_file = get_output_file(output);
 	char* source_code = malloc(sizeof(char)*4);
 	char* result = malloc(sizeof(char)*3);
-	int i;
+	int i, write, j = 1;
+    fseek(input_file, 0, SEEK_END);
+    int len = ftell(input_file);
+    fseek(input_file, 0, SEEK_SET);
 	char c = fgetc(input_file);
-	while (c != EOF){
+	while (j < len){
 		i = 0;
 		while (i < 4){
 			source_code[i] = c;
 			i++;
 			c = fgetc(input_file);
-			if(c == EOF) break;
+            if(j >= len) break;
+            j++;
 		}
 		while (i < 4){
 			source_code[i] = '=';
 			i++;
+            j++;
 		}
-		bool success = base64_decode(source_code, result);
+		bool success = base64_decode(source_code, result, &write);
 		if (!success){
 			fprintf(stderr, "Decoding Error\n");
 			return;
 		}
-        for(int i = 0; i < 4; i++) {
-            if(result[i] != '\0')
-                fwrite(&result[i], 1, 1, output_file);
-        }
+        fwrite(result, 1, write, output_file);
 	}
 	free(source_code);
 	free(result);
