@@ -94,7 +94,10 @@ void decode(char* input, char* output){
 			fprintf(stderr, "Decoding Error\n");
 			return;
 		}
-		fwrite(result, 1, 3, output_file);
+        for(int i = 0; i < 4; i++) {
+            if(result[i] != '\0')
+                fwrite(&result[i], 1, 1, output_file);
+        }
 	}
 	free(source_code);
 	free(result);
