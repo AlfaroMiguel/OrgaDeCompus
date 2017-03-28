@@ -78,6 +78,10 @@ void encode(char* input, char* output){
 void decode(char* input, char* output){
 	FILE* input_file = get_input_file(input);
 	FILE* output_file = get_output_file(output);
+	if (! input_file){
+		fprintf(stderr, "Input File Error\n");
+		return;
+	}
 	unsigned char* source_code = malloc(sizeof(char)*4);
 	unsigned char* result = malloc(sizeof(char)*3);
 	int i, write;
