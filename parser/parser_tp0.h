@@ -17,12 +17,6 @@ void set_default(run_data_t* rd);
 //Try to set action according to arg, if succesful returns 0.
 char set_action(run_data_t* rd, char* arg);
 
-//Try to set input according to arg, if succesful returns 0.
-char set_input(run_data_t* rd, char* arg);
-
-//Try to set output according to arg, if succesful returns 0.
-char set_output(run_data_t* rd, char* arg);
-
 //Parse options given from cmd line
 //Should an error occur, prints it to stderr and sets print_help with stdout as output
 void parse_cmd(run_data_t* rd, int argc, char* argv[]);

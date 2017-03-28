@@ -1,12 +1,3 @@
-/*
-v1.0
-
-	-¿Se puede cambiar went_wrong por {-declarar i afuera del for
-									  -if(i<argc) no se pudo parsear todo (hubo un break)	
-									} ????
-
-*/
-
 #include <string.h>
 #include "parser_tp0.h"
 
@@ -51,20 +42,6 @@ char set_action(run_data_t* rd, char* arg){
 	}
 	return 1;
 }
-
-// char set_input(run_data_t* rd, char* arg){
-// 	FILE* aux_in = fopen(arg,"rb");
-// 	if (aux_in == NULL) return 1;
-// 	rd->input=aux_in;
-// 	return 0;
-// }
-
-// char set_output(run_data_t* rd, char* arg){
-// 	FILE* aux_out = fopen(arg,"wb");
-// 	if (aux_out == NULL) return 1;
-// 	rd->output = aux_out;
-// 	return 0;
-// }
 
 //end:util
 
