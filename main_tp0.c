@@ -44,6 +44,10 @@ void close_files(FILE* input, FILE* output){
 
 void encode(char* input, char* output){
 	FILE* input_file = get_input_file(input);
+	if (! input_file){
+		fprintf(stderr, "Input File Error\n");
+		return;
+	}
 	FILE* output_file = get_output_file(output);
 	unsigned char* source_code = malloc(sizeof(char)*3);
 	unsigned char* result = malloc(sizeof(char)*4);
