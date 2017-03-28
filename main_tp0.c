@@ -8,7 +8,6 @@
 #define STDIN_FD 0
 #define STDOUT_FD 1
 
-
 void print_help(){
 	FILE* help_file = fopen(HELP_FILE, "r");
 	char c = fgetc(help_file);
@@ -46,8 +45,8 @@ void close_files(FILE* input, FILE* output){
 void encode(char* input, char* output){
 	FILE* input_file = get_input_file(input);
 	FILE* output_file = get_output_file(output);
-	char* source_code = malloc(sizeof(char)*3);
-	char* result = malloc(sizeof(char)*4);
+	unsigned char* source_code = malloc(sizeof(char)*3);
+	unsigned char* result = malloc(sizeof(char)*4);
 	int i, char_to_encode;
 	char c = fgetc(input_file);
 	while (c != EOF){
@@ -63,7 +62,6 @@ void encode(char* input, char* output){
 		while (i < 3){
 			source_code[i] = '\0';
 			i++;
-            j++;
 		}
 		base64_encode(source_code, result, char_to_encode);
 		fwrite(result, 1, 4, output_file);
@@ -76,8 +74,8 @@ void encode(char* input, char* output){
 void decode(char* input, char* output){
 	FILE* input_file = get_input_file(input);
 	FILE* output_file = get_output_file(output);
-	char* source_code = malloc(sizeof(char)*4);
-	char* result = malloc(sizeof(char)*3);
+	unsigned char* source_code = malloc(sizeof(char)*4);
+	unsigned char* result = malloc(sizeof(char)*3);
 	int i, write;
 	char c = fgetc(input_file);
 	while (c != EOF){

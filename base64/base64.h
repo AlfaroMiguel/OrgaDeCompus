@@ -25,16 +25,18 @@ static const char base64_table[] = {
 /*Recibe:
  *       Buffer con 3 caracteres en Base256
  *       Buffer para guardar el resultado de la codificacion
+ *       Cantidad de caracteres a encodear (que no son padding)
  *
  *Codifica el contenido en Base256 a Base64 y lo guarda en el buffer resultado*/
-bool base64_encode(const char* source_code, char* result, int char_to_encode);
+bool base64_encode(const unsigned char* source_code, unsigned char* result, int char_to_encode);
 
 /*Recibe:
  *       Buffer conteniendo 4 bytes en Base64
  *       Buffer de 3 bytes en Base256 para guardar el resultado
+ *       Puntero a int que apunta a un entero que guarda la cantidad de caracteres a escribir (que no son padding)
  *
  * Decodifica el contenido en Base64 y de ser una decodificacion existosa lo guarda
  * en el buffer result y devuelve True. Sino, devuelve False*/
-bool base64_decode(const char* source_code, char* result, int* write);
+bool base64_decode(const unsigned char* source_code, unsigned char* result, int* write);
 
 #endif
