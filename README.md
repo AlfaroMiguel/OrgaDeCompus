@@ -1,12 +1,12 @@
 # OrgaDeCompus
 TPs - Organización de computadoras - 1er Cuatrimestre 2017
 
-##Integrantes
+:pushpin:Integrantes
 * [Alfaro Miguel](https://github.com/AlfaroMiguel) :boy:
 * [Errazquin Martín](https://github.com/martinerrazquin) :boy:
 * [Mendez Agustina](https://github.com/abmendez) :girl:
 
-##Done
+:pushpin:Done
 
 - [x] Parser
 - [x] Funcion de encoding 3 bytes Base256 :arrow_right: Base64
