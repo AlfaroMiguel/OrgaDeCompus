@@ -15,7 +15,6 @@ bool base64_encode(const unsigned char* src, unsigned char* result, int char_to_
 }
 
 bool base64_decode(const unsigned char* src, unsigned char* result, int* write){
-    bool can_decode_char = false;
     char tmp[4];
     int char_to_write = 0;
 
@@ -23,22 +22,35 @@ bool base64_decode(const unsigned char* src, unsigned char* result, int* write){
         tmp[i] = src[i];
     }
 
-    for (int i = 0; i < 4; ++i) {
+    for (int i = 0; i < 4; ++i){
         if(tmp[i] == EMPTYBASE64){
             tmp[i] = EMPTYBASE256;
-            continue;
         }
-        for (int l = 0; l < 64; ++l) {
-            if (tmp[i] == base64_table[l]) {
-                tmp[i] = l;
-                char_to_write++;
-                can_decode_char = true;
-                break;
+        else {
+            if (tmp[i] >= A_ASCII && tmp[i] <= Z_ASCII) {
+                tmp[i] -= OFFSET1;
             }
+            else if (tmp[i] >= A_MIN_ASCII && tmp[i] <= Z_MIN_ASCII) {
+                tmp[i] -= OFFSET2;
+            }
+            else if (tmp[i] >= ZERO_ASCII && tmp[i] <= NINE_ASCII) {
+                tmp[i] += OFFSET3;
+            }
+
+            else if (tmp[i] == PLUS) {
+                tmp[i] = PLUSB64;
+            }
+            else if (tmp[i] == SLASH) {
+                tmp[i] = SLASHB64;
+            }
+            else{
+                return false;
+            }
+            char_to_write++;
         }
-        if(!can_decode_char)return false;
-        can_decode_char = false;
+
     }
+
     result[0] = (tmp[0] << 2) + ((tmp[1] & 0x30) >> 4);
     result[1] = ((tmp[1] & 0xf) << 4) + ((tmp[2] & 0x3c) >> 2);
     result[2] = ((tmp[2] & 0x3) << 6) + tmp[3];

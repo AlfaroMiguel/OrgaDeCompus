@@ -8,6 +8,12 @@
 #define STDIN_FD 0
 #define STDOUT_FD 1
 
+#define SOURCE_CODE_SIZE_ENCODE 3
+#define RESULT_SIZE_ENCODE 4
+
+#define SOURCE_CODE_SIZE_DECODE 4
+#define RESULT_SIZE_DECODE 3
+
 void print_help(){
 	FILE* help_file = fopen(HELP_FILE, "r");
 	char c = fgetc(help_file);
@@ -45,10 +51,10 @@ void close_files(FILE* input, FILE* output){
 void encode(char* input, char* output){
 	FILE* input_file = get_input_file(input);
 	FILE* output_file = get_output_file(output);
-	unsigned char* source_code = malloc(sizeof(char)*3);
-	unsigned char* result = malloc(sizeof(char)*4);
+	unsigned char source_code[SOURCE_CODE_SIZE_ENCODE];
+	unsigned char result[RESULT_SIZE_ENCODE];
 	int i, char_to_encode;
-	char c = fgetc(input_file);
+	int c = fgetc(input_file);
 	while (c != EOF){
 		i = 0;
         char_to_encode = 0;
@@ -66,18 +72,21 @@ void encode(char* input, char* output){
 		base64_encode(source_code, result, char_to_encode);
 		fwrite(result, 1, 4, output_file);
 	}
-	free(source_code);
-	free(result);
+
+	if(ferror(input_file))
+		fprintf(stderr, "ERROR READING FILE %s", input);
+
+
 	close_files(input_file, output_file);
 }
 
 void decode(char* input, char* output){
 	FILE* input_file = get_input_file(input);
 	FILE* output_file = get_output_file(output);
-	unsigned char* source_code = malloc(sizeof(char)*4);
-	unsigned char* result = malloc(sizeof(char)*3);
+	unsigned char source_code[SOURCE_CODE_SIZE_DECODE];
+	unsigned char result[RESULT_SIZE_DECODE];
 	int i, write;
-	char c = fgetc(input_file);
+	int c = fgetc(input_file);
 	while (c != EOF){
 		i = 0;
 		while (i < 4){
@@ -97,8 +106,11 @@ void decode(char* input, char* output){
 		}
         fwrite(result, 1, write, output_file);
 	}
-	free(source_code);
-	free(result);
+
+	if(ferror(input_file))
+		fprintf(stderr, "ERROR READING FILE %s", input);
+
+
 	close_files(input_file, output_file);
 }
 

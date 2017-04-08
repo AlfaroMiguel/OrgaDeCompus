@@ -9,8 +9,22 @@
 /*DEFINICION CONSTANTES*/
 #define EMPTYBASE256 '\0'
 #define EMPTYBASE64 '='
+#define PLUS '+'
+#define SLASH '/'
 
-/*Tabla de simbolos Base64*/
+#define A_ASCII 65
+#define Z_ASCII 90
+#define A_MIN_ASCII 97
+#define Z_MIN_ASCII 122
+#define ZERO_ASCII 48
+#define NINE_ASCII 57
+
+#define OFFSET1 65
+#define OFFSET2 71
+#define OFFSET3 4
+#define PLUSB64 62
+#define SLASHB64 63
+
 static const char base64_table[] = {
         'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
         'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
