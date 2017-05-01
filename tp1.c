@@ -67,7 +67,7 @@ void close_files(FILE* input, FILE* output){
 		fclose(output);
 }
 
-int encode(int input, int output){
+int encode(int input_file, int output_file){
 	unsigned char source_code[SOURCE_CODE_SIZE_ENCODE];
 	unsigned char result[RESULT_SIZE_ENCODE];
 	int i, char_to_encode, bytes_written;
@@ -95,7 +95,7 @@ int encode(int input, int output){
 	return NO_ERROR_CODE;
 }
 
-int decode(int input, int output){
+int decode(int input_file, int output_file){
 	unsigned char source_code[SOURCE_CODE_SIZE_DECODE];
 	unsigned char result[RESULT_SIZE_DECODE];
 	int i, write, bytes_written;
