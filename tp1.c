@@ -16,11 +16,8 @@
 
 #define VERSION_MSG "Version %s\n"
 #define ARGUMENT_ERROR_MSG "ARGUMENT ERROR\n"
-#define DECODING_ERROR_MSG "DECODING ERROR\n"
 #define INPUT_OPENING_ERROR_MSG "ERROR OPENING INPUT FILE \n"
 #define OUTPUT_OPENING_ERROR_MSG "ERROR OPENING OUTPUT FILE \n"
-#define FILE_WRITING_ERROR_MSG "ERROR WRITING IN FILE\n"
-#define FILE_READING_ERROR_MSG "ERROR READING FROM FILE\n"
 
 #define STD_FILE_SYMBOL "-"
 
@@ -33,6 +30,8 @@
 
 // static const char* error_msg[3] = {DECODING_ERROR_MSG, FILE_WRITING_ERROR_MSG, FILE_READING_ERROR_MSG};
 // static char error_buf[MAX_ERROR_LEN];
+
+extern const char* errmsg[];
 
 void print_help(){
 	FILE* help_file = fopen(HELP_FILE, "r");
@@ -123,9 +122,6 @@ int decode(int input, int output){
 	return NO_ERROR_CODE;
 }
 
-char* get_error_msg(int error_code){
-	if (error_code > 3 || error_code < 1) snprintf()
-}
 int main(int argc, char* argv[]){
 	run_data_t* rd = malloc(sizeof(run_data_t));
 	parse_cmd(rd, argc, argv);
@@ -150,7 +146,7 @@ int main(int argc, char* argv[]){
 	if (rd->is_decode) res = decode(fileno(input_file), fileno(output_file));
 	else if(!rd->error_flag) res = encode(fileno(input_file), fileno(output_file));
 	else fprintf(stderr, ARGUMENT_ERROR_MSG);
-	if (res != 0) fprintf(stderr, get_error_msg(res));
+	if (res != 0) fprintf(stderr, errmsg[res-1]);
 	close_files(input_file, output_file);
 	free(rd);
 	return 0;
