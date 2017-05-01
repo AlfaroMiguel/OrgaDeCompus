@@ -128,7 +128,7 @@ int main(int argc, char* argv[]){
 	if (rd->print_version){
 		print_version();
 		return 0;
-		}
+	}
 	FILE* input_file = get_input_file(rd->input);
 	if (! input_file) {
 		fprintf(stderr, INPUT_OPENING_ERROR_MSG);
@@ -144,7 +144,7 @@ int main(int argc, char* argv[]){
 	if (rd->is_decode) res = base64_decode(fileno(input_file), fileno(output_file));
 	else if(!rd->error_flag) res = base64_encode(fileno(input_file), fileno(output_file));
 	else fprintf(stderr, ARGUMENT_ERROR_MSG);
-	if (res != 0) fprintf(stderr, "%s", errmsg[res-1]);
+	if (res != 0) fprintf(stderr, "%s\n", errmsg[res-1]);
 	close_files(input_file, output_file);
 	free(rd);
 	return 0;
