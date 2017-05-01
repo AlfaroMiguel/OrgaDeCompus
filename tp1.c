@@ -29,12 +29,10 @@
 #define FILE_WRITING_ERROR_CODE 2
 #define FILE_READING_ERROR_CODE 3
 
-//#define MAX_ERROR_LEN 30
+// #define MAX_ERROR_LEN 30
 
 // static const char* error_msg[3] = {DECODING_ERROR_MSG, FILE_WRITING_ERROR_MSG, FILE_READING_ERROR_MSG};
 // static char error_buf[MAX_ERROR_LEN];
-
-extern const char* errmsg[];
 
 void print_help(){
 	FILE* help_file = fopen(HELP_FILE, "r");
@@ -137,20 +135,20 @@ int main(int argc, char* argv[]){
 		print_version();
 		return 0;
 		}
-	int input_file = fileno(get_input_file(rd->input));
+	FILE* input_file = get_input_file(rd->input);
 	if (! input_file) {
 		fprintf(stderr, INPUT_OPENING_ERROR_MSG);
 		return 0;
 	}
-	int output_file = fileno(get_output_file(rd->output));
+	FILE* output_file = get_output_file(rd->output);
 	if (! output_file) {
 		fprintf(stderr, OUTPUT_OPENING_ERROR_MSG);
 		close_files(input_file, output_file);
 		return 0;
 	}
 	int res;
-	if (rd->is_decode) res = decode(input_file, output_file);
-	else if(!rd->error_flag) res = encode(input_file, output_file);
+	if (rd->is_decode) res = decode(fileno(input_file), fileno(output_file));
+	else if(!rd->error_flag) res = encode(fileno(input_file), fileno(output_file));
 	else fprintf(stderr, ARGUMENT_ERROR_MSG);
 	if (res != 0) fprintf(stderr, get_error_msg(res));
 	close_files(input_file, output_file);
