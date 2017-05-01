@@ -1,3 +1,5 @@
+#define _POSIX_C_SOURCE 1
+
 #include "parser/parser_tp0.h"
 #include "base64/base64.h"
 #include <stdlib.h>

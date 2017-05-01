@@ -42,6 +42,7 @@ static const char base64_table[] = {
 };
 
 const char* errmsg[3] = {DECODING_ERROR_MSG, FILE_WRITING_ERROR_MSG, FILE_READING_ERROR_MSG};
+
 /*Recibe:
  *       Buffer con 3 caracteres en Base256
  *       Buffer para guardar el resultado de la codificacion
