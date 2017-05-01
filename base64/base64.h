@@ -30,6 +30,8 @@
 #define FILE_WRITING_ERROR_MSG "ERROR WRITING IN FILE\n"
 #define FILE_READING_ERROR_MSG "ERROR READING FROM FILE\n"
 
+
+
 static const char base64_table[] = {
         'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
         'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
@@ -41,7 +43,7 @@ static const char base64_table[] = {
         '4', '5', '6', '7', '8', '9', '+', '/'
 };
 
-const char* errmsg[3] = {DECODING_ERROR_MSG, FILE_WRITING_ERROR_MSG, FILE_READING_ERROR_MSG};
+extern const char* errmsg[3];
 /*Recibe:
  *       Buffer con 3 caracteres en Base256
  *       Buffer para guardar el resultado de la codificacion

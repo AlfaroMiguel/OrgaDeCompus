@@ -1,4 +1,6 @@
 #include "base64.h"
+const char* errmsg[3] = {DECODING_ERROR_MSG, FILE_WRITING_ERROR_MSG, FILE_READING_ERROR_MSG};
+
 
 bool base64_encode(const unsigned char* src, unsigned char* result, int char_to_encode){
     result[0] = (src[0] & 0xfc) >> 2;

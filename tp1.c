@@ -32,8 +32,6 @@
 // static const char* error_msg[3] = {DECODING_ERROR_MSG, FILE_WRITING_ERROR_MSG, FILE_READING_ERROR_MSG};
 // static char error_buf[MAX_ERROR_LEN];
 
-extern const char* errmsg[];
-
 void print_help(){
 	FILE* help_file = fopen(HELP_FILE, "r");
 	char c = fgetc(help_file);
