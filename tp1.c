@@ -2,6 +2,7 @@
 #include "base64/base64.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
 
 #define HELP_FILE "help.txt"
 #define VERSION "2.1.3"
@@ -71,54 +72,56 @@ int encode(int input_file, int output_file){
 	unsigned char source_code[SOURCE_CODE_SIZE_ENCODE];
 	unsigned char result[RESULT_SIZE_ENCODE];
 	int i, char_to_encode, bytes_written;
-	int c = fgetc(input_file);
-	while (c != EOF){
+	char buffer[1];
+	int bytes_read = read(input_file, buffer, 1);
+	while (buffer[0] != EOF){
 		i = 0;
         char_to_encode = 0;
 		while (i < 3){
-			source_code[i] = c;
+			source_code[i] = buffer[0];
 			i++;
             char_to_encode++;
-			c = fgetc(input_file);
-            if(c == EOF) break;
+			bytes_read = read(input_file, buffer, 1);
+            if(buffer[0] == EOF) break;
 		}
 		while (i < 3){
 			source_code[i] = '\0';
 			i++;
 		}
 		base64_encode(source_code, result, char_to_encode);
-		bytes_written = fwrite(result, 1, 4, output_file);
+		bytes_written = write(output_file, result, 4);
 		if (bytes_written == 0) return FILE_WRITING_ERROR_CODE;
 	}
 
-	if(ferror(input_file)) return FILE_READING_ERROR_CODE; 
+	if(bytes_read == -1) return FILE_READING_ERROR_CODE; 
 	return NO_ERROR_CODE;
 }
 
 int decode(int input_file, int output_file){
 	unsigned char source_code[SOURCE_CODE_SIZE_DECODE];
 	unsigned char result[RESULT_SIZE_DECODE];
-	int i, write, bytes_written;
-	int c = fgetc(input_file);
-	while (c != EOF){
+	int i, bytes_write, bytes_written;
+	char buffer[1];
+	int bytes_read = read(input_file, buffer, 1);
+	while ((int)buffer[0] != EOF){
 		i = 0;
 		while (i < 4){
-			source_code[i] = c;
+			source_code[i] = (int)buffer[0];
 			i++;
-			c = fgetc(input_file);
-            if(c == EOF) break;
+			bytes_read = read(input_file, buffer, 1);
+            if((int)buffer[0] == EOF) break;
 		}
 		while (i < 4){
 			source_code[i] = '=';
 			i++;
 		}
-		bool success = base64_decode(source_code, result, &write);
+		bool success = base64_decode(source_code, result, &bytes_write);
 		if (!success) return DECODING_ERROR_CODE;
-        bytes_written = fwrite(result, 1, write, output_file);
+        bytes_written = write(output_file, result, bytes_write);
         if (bytes_written == 0) return FILE_WRITING_ERROR_CODE;
 	}
 
-	if(ferror(input_file)) return FILE_READING_ERROR_CODE;
+	if(bytes_read == -1) return FILE_READING_ERROR_CODE;
 	return NO_ERROR_CODE;
 }
 
@@ -146,7 +149,7 @@ int main(int argc, char* argv[]){
 	if (rd->is_decode) res = decode(fileno(input_file), fileno(output_file));
 	else if(!rd->error_flag) res = encode(fileno(input_file), fileno(output_file));
 	else fprintf(stderr, ARGUMENT_ERROR_MSG);
-	if (res != 0) fprintf(stderr, errmsg[res-1]);
+	if (res != 0) fprintf(stderr, "%s", errmsg[res-1]);
 	close_files(input_file, output_file);
 	free(rd);
 	return 0;
