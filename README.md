@@ -10,5 +10,7 @@ TPs - Organización de computadoras - 1er Cuatrimestre 2017
 
 - [x] TP0
 - [ ] TP1
-
+  - [ ] Cambios en el main
+  - [ ] Assembly de encode
+  - [ ] Assembly de decode
 - [x] Informe https://www.overleaf.com/8715138fyzktgmsrwqc
