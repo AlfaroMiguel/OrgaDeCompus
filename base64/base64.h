@@ -44,6 +44,7 @@ static const char base64_table[] = {
 };
 
 extern const char* errmsg[3];
+
 /*Recibe:
  *       Buffer con 3 caracteres en Base256
  *       Buffer para guardar el resultado de la codificacion
