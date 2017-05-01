@@ -140,7 +140,7 @@ int main(int argc, char* argv[]){
 		close_files(input_file, output_file);
 		return 0;
 	}
-	int res;
+	int res = 0;
 	if (rd->is_decode) res = decode(fileno(input_file), fileno(output_file));
 	else if(!rd->error_flag) res = encode(fileno(input_file), fileno(output_file));
 	else fprintf(stderr, ARGUMENT_ERROR_MSG);
