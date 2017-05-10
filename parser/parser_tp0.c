@@ -71,8 +71,9 @@ char set_action(run_data_t* rd, char* arg){
 
 
 void parse_cmd(run_data_t* rd, int argc, char* argv[]){
-	char went_wrong=0;	
-	for(int i = 1; i<argc; i++){	//parsing loop
+	char went_wrong=0;
+	int i;
+	for(i = 1; i<argc; i++){	//parsing loop
 		if(!strcmp(argv[i],VERSION1) || !strcmp(argv[i],VERSION2)){ //version
 			rd->print_version=1;
 			continue;

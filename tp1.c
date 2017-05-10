@@ -1,7 +1,7 @@
 #define _POSIX_C_SOURCE 1
 
 #include "parser/parser_tp0.h"
-#include "base64/base64.h"
+#include "base64.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -28,6 +28,16 @@
 #define DECODING_ERROR_CODE 1
 #define FILE_WRITING_ERROR_CODE 2
 #define FILE_READING_ERROR_CODE 3
+
+#define DECODING_ERROR_MSG "DECODING ERROR"
+#define FILE_WRITING_ERROR_MSG "ERROR WRITING IN FILE"
+#define FILE_READING_ERROR_MSG "ERROR READING FROM FILE"
+
+extern int base64_encode(int fd_in, int fd_out);
+extern int base64_decode(int fd_in, int fd_out);
+
+const char* errmsg[3] = {DECODING_ERROR_MSG, FILE_WRITING_ERROR_MSG, FILE_READING_ERROR_MSG};
+
 
 void print_help(){
 	FILE* help_file = fopen(HELP_FILE, "r");
@@ -142,7 +152,11 @@ int main(int argc, char* argv[]){
 	}
 	int res = 0;
 	if (rd->is_decode) res = base64_decode(fileno(input_file), fileno(output_file));
-	else if(!rd->error_flag) res = base64_encode(fileno(input_file), fileno(output_file));
+	else if(!rd->error_flag){
+		printf("Estoy por encodear\n");
+		res = base64_encode(fileno(input_file), fileno(output_file));
+		printf("Ya encodee\n");
+	}
 	else fprintf(stderr, ARGUMENT_ERROR_MSG);
 	if (res != 0) fprintf(stderr, "%s\n", errmsg[res-1]);
 	close_files(input_file, output_file);
