@@ -1,0 +1,17 @@
+Ejecutar el emulador:
+hostOS$ ./xgxemul -e 3max -d netbsd-pmax.img -x
+
+En el HOST (miguelalfaro):
+hostOS# ifconfig lo:0 172.20.0.1
+
+En el GUEST:
+guestOS$ ssh -R 2222:127.0.0.1:22 miguelalfaro@172.20.0.1
+
+Y para tener terminales en el HOST que sean las del GUEST en una terminal nueva hacemos:
+hostOS$ ssh -p 2222 root@127.0.0.1
+
+PARA COPIAR ARCHIVOS
+$ scp -P2222 [-r] origen destino
+
+Ejemplo: hostOS$ scp -P2222 -r /home/mi_usuario/66.20/tp0 root@127.0.0.1:/home/root
+
