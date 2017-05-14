@@ -14,3 +14,40 @@ TPs - Organización de computadoras - 1er Cuatrimestre 2017
   - [ ] Assembly de encode
   - [ ] Assembly de decode
 - [x] Informe https://www.overleaf.com/8715138fyzktgmsrwqc
+
+
+Como ejecutar el "maravilloso" emulador y probar el programa for dummies:
+
+1 - Ir a la carpeta gxemul-6620-20070927
+2 - En una terminal nueva ejecutar "./xgxemul -e 3max -d netbsd-pmax.img" (sin el -x asi corre en una terminal de linux y podemos hacer copy paste)
+3 - En esa terminar ingresar con el usuario "root" y pass "orga6620"
+4 - En otra terminal de linux "sudo ifconfig lo:0 172.20.0.1"
+5 - En la terminal que corrimos el primer comando (donde esta corriendo NETBSD) ejecutar: "ssh -R 2222:127.0.0.1:22 miguelalfaro@172.20.0.1" donde dice 'miguelalfaro' obviamente, va el nombre que tengas en linux
+6 - Ahora esa terminal no nos sirve mas ya que abrimos un tunel ssh a linux (no queremos eso) NO LA CIERRRES, minimizala
+7 - En una terminal nueva de linux necesitamos conectarnos a NETBSD, para eso: "ssh -p 2222 root@127.0.0.1" y nos pide la pass que es "orga6620"
+8 - Ahora tenemos una terminal de linux si aparece algo como "Terminal type?" apretar ctrl + c
+9 - Ahora necesitamos copiar el tp a NETBSD para eso en otra terminal nueva de linux hacemos por ejemplo:
+
+    scp -P2222 -r /home/miguelalfaro/Desktop/Organizacion\ de\ Computadoras/TP1/OrgaDeCompus/ root@127.0.0.1:/home/tp1/
+    scp -P2222 -r /home/miguelalfaro/Desktop/Organizacion\ de\ Computadoras/TP1/OrgaDeCompus/base64.S root@127.0.0.1:/home/tp1/
+    
+    
+Ahora en la terminal que tenemos el tunel a NETBSD, podemos ejecutar comandos como cd o ls para ir hasta donde esta el tp, en este caso home/tp1 y alli para compilar el tp se hace:
+
+     gcc -c -ggdb -Wall tp1.c
+     gcc -c -ggdb -Wall parser_tp0.c
+     gcc -c -ggdb -Wall base64.S
+     
+     gcc tp1.o parser_tp0.o base64.o -o tpexe
+
+Si todo salio bien podemos hacer:
+
+    echo -n Man is distinguished, not only by his reason, but by this singular passion from other animals, which is a lust of the mind, that by a perseverance of delight in the continued and indefatigable generation of knowledge, exceeds the short vehemence of any carnal pleasure.|./tpexe
+    
+    
+Lo que nos da la salida:
+
+      TWFuIGlzIGRpc3Rpbmd1aXNoZWQsIG5vdCBvbmx5IGJ5IGhpcyByZWFzb24sIGJ1dCBieSB0aGlzIHNpbmd1bGFyIHBhc3Npb24gZnJvbSBvdGhlciBhbmltYWxzLCB3aGljaCBpcyBhIGx1c3Qgb2YgdGhlIG1pbmQsIHRoYXQgYnkgYSBwZXJzZXZlcmFuY2Ugb2YgZGVsaWdodCBpbiB0aGUgY29udGludWVkIGFuZCBpbmRlZmF0aWdhYmxlIGdlbmVyYXRpb24gb2Yga25vd2xlZGdlLCBleGNlZWRzIHRoZSBzaG9ydCB2ZWhlbWVuY2Ugb2YgYW55IGNhcm5hbCBwbGVhc3VyZ
+      
+      
+La cual es la correcta :)
