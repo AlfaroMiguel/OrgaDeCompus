@@ -28,8 +28,8 @@ Como ejecutar el "maravilloso" emulador y probar el programa for dummies:
 * Ahora tenemos una terminal de linux si aparece algo como "Terminal type?" apretar ctrl + c
 * Ahora necesitamos copiar el tp a NETBSD para eso en otra terminal nueva de linux hacemos por ejemplo:
 
-    scp -P2222 -r /home/miguelalfaro/Desktop/Organizacion\ de\ Computadoras/TP1/OrgaDeCompus/ root@127.0.0.1:/home/tp1/
-    scp -P2222 -r /home/miguelalfaro/Desktop/Organizacion\ de\ Computadoras/TP1/OrgaDeCompus/base64.S root@127.0.0.1:/home/tp1/
+      scp -P2222 -r /home/miguelalfaro/Desktop/Organizacion\ de\ Computadoras/TP1/OrgaDeCompus/ root@127.0.0.1:/home/tp1/
+      scp -P2222 -r /home/miguelalfaro/Desktop/Organizacion\ de\ Computadoras/TP1/OrgaDeCompus/base64.S root@127.0.0.1:/home/tp1/
     
     
 Ahora en la terminal que tenemos el tunel a NETBSD, podemos ejecutar comandos como cd o ls para ir hasta donde esta el tp, en este caso home/tp1 y alli para compilar el tp se hace:
