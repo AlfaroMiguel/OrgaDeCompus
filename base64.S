@@ -24,66 +24,84 @@ base64_encode:
               sw a0,40(sp)        #guardo a0 en el stack del caller
               sw a1,44(sp)        #guardo a1 en el stack de caller
 
+
 leer:
-              lw a0,40(sp)        # fd = infd
-              la a1,buffer        # buf = es el direccion donde quiere que la funcion guarde lo que leyo
-              li a2,3             # leo 3 bytes
-              li v0,SYS_read      # se guarda en v0 el codigo del system call
+              lw a0, 40(sp)        # fd = infd
+              la a1, buffer        # buf = es el direccion donde quiere que la funcion guarde lo que leyo
+              li a2, 3             # leo 3 bytes
+              li v0, SYS_read      # se guarda en v0 el codigo del system call
               syscall
 
-              li t1, 2            #t1 = shift necesarios para quedarme con los bits mas significativos
               la t2, buffer       #t2 = buffer
               la t3, tabla        #t3 = tabla
 
-              lb t4, (t2)       #t4 = primer byte leido
-              addiu t2, t2, 1
-              lb t5, (t2)       #t5 = segundo byte leido
-              addiu t2, t2, 1
-              lb t6, (t2)       #t6 = tercer byte leido
+              lw t4, 0(t2)        #t4 = 4 bytes (me sirven solo los 3 primeros)
 
-              srl s1, t4, 2       #s1 = indice primer byte base 64
-              add t7, t3, s1      #t7 = direc del byte a cargar
-              lb s1, (t7)         #s1 = primer byte base64
+              beqz v0, fin        #read = 0
 
-              andi s2, t4, 3      #me quedo con los dos bits que no uso
-              sll s2, s2, 4       #shifteo 4 bits a izquierda el byte 1
-              srl t8, t5, 4       #shifteo 4 bits a derecha el byte 2
-              or s2, s2, t8       #hago or y tengo el indice
-              add t7, t3, s2
-              lb s2, (t7)         # s2 = segundo byte base64
+              sll s1, t4, 24
+              srl s1, s1, 26      #s1 = indice primer byte de base 64
 
-              andi s3, t5, 15
+              sll s2, t4, 16
+              srl s2, s2, 28
+
+              sll t5, t4, 30
+              srl t5, t5, 26
+              or s2, s2, t5       #s2 = indice segundo byte de base 64
+
+
+              beq v0, 1, cargar_s3
+
+              sll s3, t4, 20
+              srl s3, s3, 28
               sll s3, s3, 2
-              srl t8, t6, 6
-              or s3, s3, t8
-              add t7, t3, s3
-              lb s3, (t7)
+              sll t5, t4, 8
+              srl t5, t5, 30
+              or s3, s3, t5       #s3 = indice tercer byte base 64
 
-              andi s4, t6, 63
-              add t7, t3, s4
-              lb s4, (t7)
+
+              beq v0, 2, cargar_s4
+
+              sll s4, t4, 10
+              srl s4, s4, 26      #s4 = indice cuarto byte base 64
+
+              j cargar_buffer
+
+cargar_s3:
+          li s3, 64
+
+cargar_s4:
+          li s4, 64
+          j cargar_buffer
+
 
 cargar_buffer:
               la t2, buffer
-              sb s1, (t2)
 
-              addiu t2, 1
-              sb s2, (t2)
+              add t1, t3, s1
+              lb s1,  (t1)
+              sb s1, 0(t2)
 
-              addiu t2, 1
-              sb s3, (t2)
+              add t1, t3, s2
+              lb s2, (t1)
+              sb s2, 1(t2)
 
-              addiu t2, 1
-              sb s4, (t2)
+              add t1, t3, s3
+              lb s3, (t1)
+              sb s3, 2(t2)
 
+              add t1, t3, s4
+              lb s4, (t1)
+              sb s4, 3(t2)
 
 imprimir:
-              lw a0,44(sp)        # a0 = fd_out
-              la a1,buffer        # a1 = direccion del buffer a escribir
-              li a2,4             # a2 = bytes a escribir
-              li v0,SYS_write     # Indicamos que queremos llamar a la syscall write
+              lw a0, 44(sp)        # a0 = fd_out
+              la a1, buffer        # a1 = direccion del buffer a escribir
+              li a2, 4             # a2 = bytes a escribir
+              li v0, SYS_write     # Indicamos que queremos llamar a la syscall write
               syscall
-              j fin               # termino
+              sw zero, buffer
+              j leer               # leo de nuevo
 
 fin:
               lw ra,32(sp)
@@ -92,8 +110,7 @@ fin:
               jr ra
               .end base64_encode
 
-
 .data
-.align 0
+.align 2
 buffer: .space 4
 tabla: .ascii "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/="
