@@ -7,10 +7,14 @@
 #include <stdbool.h>
 
 /*DEFINICION CONSTANTES*/
-#define EMPTYBASE256 '\0'
-#define EMPTYBASE64 '='
-#define PLUS '+'
-#define SLASH '/'
+//#define EMPTYBASE256 '\0'
+#define EMPTYBASE256  0
+//#define EMPTYBASE64 '='
+#define EMPTYBASE64 61
+//#define PLUS '+'
+#define PLUS 43
+//#define SLASH '/'
+#define SLASH 47
 
 #define A_ASCII 65
 #define Z_ASCII 90
@@ -28,6 +32,6 @@
 
 int base64_encode(int fd_in, int fd_out);
 
-//int base64_decode(int fd_in, int fd_out);
+int base64_decode(int fd_in, int fd_out);
 
 #endif

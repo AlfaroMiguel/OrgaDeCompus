@@ -1,11 +1,15 @@
 #include <mips/regdef.h>
 #include <sys/syscall.h>
 
+#include <base64.h>
+
 .text
 .abicalls
 .align 2
 .global base64_encode
+.global base64_decode
 .ent base64_encode
+.ent base64_decode
 
 #a0 = fd_in
 #a1 = fd_out
@@ -117,6 +121,138 @@ fin:
               addu sp,sp,40
               jr ra
               .end base64_encode
+
+base64_decode:
+            .frame $fp, 40, ra
+            .set noreorder
+            .cpload t9
+            .set reorder
+
+            subu sp,sp,40       	#sizeof stack frame
+            .cprestore 24
+            sw ra,32(sp)       
+            sw $fp,28(sp)      
+            move $fp,sp        
+            sw a0,40(sp)    	    
+            sw a1,44(sp)        	
+
+d_leer:
+            lw a0, 40(sp)        	# fd = fd_in
+            la a1, buffer       	# buf = dest_addr
+            li a2, 4            	# leo 4 bytes
+            li v0, SYS_read      	# se guarda en v0 el codigo del system call
+            syscall
+
+            la t2, buffer       	#t2 = buffer
+            la t3, tabla        	#t3 = tabla
+
+            lw t4, 0(t2)        	#t4 = 4 bytes (IMPORTANTE: buffer[0] es t4 & 0xFF)
+
+			beqz v0, d_fin  		#read = 0 => EOF
+			blu	v0,4,decode_error	#si no leyo 4 bytes devolver error siempre
+
+			li t5, 0				#IDX = 0
+			li t3,0					#tmp
+d_loop:		
+			beq t5,v0,d_formateo	#if (IDX== retval(read)) ya se trato todos los B leidos
+			multu t6,t5,8		
+			srl	t2,t4,t6			#t2 = t4 >> IDX = buffer[IDX]
+			andi t2,t2,0xff			#solo me quedo con ese B
+			
+			bne t2,EMPTYBASE64,sigue0
+			li	t2,EMPTYBASE256
+			j d_fin_loop2
+			
+sigue0:		blu t2,A_ASCII,sigue1
+			bgu	t2,Z_ASCII,sigue1
+			subu t2,t2,OFFSET1
+			j d_fin_loop1
+
+sigue1:		blu	t2,A_MIN_ASCII,sigue2
+			bgu	t2,Z_MIN_ASCII,sigue2
+			subu t2,t2,OFFSET2
+			j d_fin_loop1
+
+sigue2:		blu t2,ZERO_ASCII,sigue3
+			bgu t2,NINE_ASCII,sigue3
+			subu t2,t2,OFFSET3
+			j d_fin_loop1
+
+sigue3:		bne t2,PLUS,sigue4
+			li	t7,PLUSB64
+			move t2,t7
+			j d_fin_loop1
+
+sigue4:		bne t2,SLASH,decode_error
+			li	t2,SLASHB64
+			j d_fin_loop1
+
+decode_error:		
+			li v0,1
+			j d_fin
+
+d_fin_loop1:	
+			addiu t3,t3,1
+
+d_fin_loop2:	
+			sll	t2,t2,t6
+			or	t3,t3,t2			
+			addiu t5,t5,1
+			j d_loop
+
+#t5 es la cantidad de Bytes leidos (ahora es igual a v0)
+#t3 es tmp
+#no usar t0 y t1?
+#a1 es &buffer
+
+d_formateo:
+			andi t2,t3,0xff		#t2=tmp[0]
+			sll	t2,t2,2	
+			srl	t4,t3,12		#t4=tmp[1]>>4	
+			andi t4,t4,0x3		#t4 &= 0x3
+			and	t2,t2,t4
+			sb	t2,0(a1)		#buffer[0]=t2
+
+#tras esto buffer[0] = | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 |
+#					   | 		tmp[0][0:5]    |tmp[1][4:5]|
+	
+			srl	t2,t3,4		
+			andi t2,t2,0xf0		#t2=(tmp[1] & 0xf) <<4
+			srl t4,t3,18
+			andi t4,t4,0xf		#t4= (tmp[2] >> 2) & 0xf
+			and	t2,t2,t4
+			sb	t2,1(a1)		#buffer[1]=t2
+
+#tras esto buffer[1] = | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 |
+#					   | tmp[0][0:3]   |   tmp[2][2:5] |
+
+			andi t2,t3,0x30000
+			srl t2,t2,10		#t2=(tmp[2] & 0x3) <<6
+			srl t4,t3,24		#t4=tmp[3]
+			and t2,t2,t4
+			sb t2,2(a1)			#buffer[2]=t2
+	
+#tras esto buffer[2] = | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 |
+#				   |tmp[2][0:1]|      tmp[3][0:5]	   |	
+
+d_imprimir:
+            lw a0, 44(sp)       #a0 = fd_out
+            la a1, buffer       #a1 = direccion del buffer a escribir
+            li a2, 3            #a2 = bytes a escribir
+            li v0, SYS_write     
+            syscall
+            sw zero, buffer     #limpio el buffer
+            j d_leer            # leo de nuevo
+
+#si vengo de error ya cargo v0 con 1
+#si leyo 0 del read entonces v0 ya es 0
+d_fin:
+            lw ra,32(sp)
+            lw $fp,28(sp)
+            addu sp,sp,40
+            jr ra
+            .end base64_decode
+
 
 .data
 .align 2
