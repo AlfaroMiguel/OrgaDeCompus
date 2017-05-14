@@ -41,15 +41,40 @@ leer:
               addiu t2, t2, 1
               lb t6, (t2)       #t6 = tercer byte leido
 
-
-              srl s1, t4, t1      #s1 = indice primer byte base 64
-
+              srl s1, t4, 2       #s1 = indice primer byte base 64
               add t7, t3, s1      #t7 = direc del byte a cargar
-              lb s1, (t7)         #s1= byte base64
+              lb s1, (t7)         #s1 = primer byte base64
 
+              andi s2, t4, 3      #me quedo con los dos bits que no uso
+              sll s2, s2, 4       #shifteo 4 bits a izquierda el byte 1
+              srl t8, t5, 4       #shifteo 4 bits a derecha el byte 2
+              or s2, s2, t8       #hago or y tengo el indice
+              add t7, t3, s2
+              lb s2, (t7)         # s2 = segundo byte base64
+
+              andi s3, t5, 15
+              sll s3, s3, 2
+              srl t8, t6, 6
+              or s3, s3, t8
+              add t7, t3, s3
+              lb s3, (t7)
+
+              andi s4, t6, 63
+              add t7, t3, s4
+              lb s4, (t7)
+
+cargar_buffer:
               la t2, buffer
-              sb s1, (t2)       #guardo el byte en el buffer
+              sb s1, (t2)
 
+              addiu t2, 1
+              sb s2, (t2)
+
+              addiu t2, 1
+              sb s3, (t2)
+
+              addiu t2, 1
+              sb s4, (t2)
 
 
 imprimir:
@@ -70,5 +95,5 @@ fin:
 
 .data
 .align 0
-buffer: .space 5
+buffer: .space 4
 tabla: .ascii "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/="
