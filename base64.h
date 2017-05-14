@@ -26,22 +26,8 @@
 #define SLASHB64 63
 
 
-
-/*Recibe:
- *       Buffer con 3 caracteres en Base256
- *       Buffer para guardar el resultado de la codificacion
- *       Cantidad de caracteres a encodear (que no son padding)
- *
- *Codifica el contenido en Base256 a Base64 y lo guarda en el buffer resultado*/
 int base64_encode(int fd_in, int fd_out);
 
-/*Recibe:
- *       Buffer conteniendo 4 bytes en Base64
- *       Buffer de 3 bytes en Base256 para guardar el resultado
- *       Puntero a int que apunta a un entero que guarda la cantidad de caracteres a escribir (que no son padding)
- *
- * Decodifica el contenido en Base64 y de ser una decodificacion existosa lo guarda
- * en el buffer result y devuelve True. Sino, devuelve False*/
-int base64_decode(int fd_in, int fd_out);
+//int base64_decode(int fd_in, int fd_out);
 
 #endif
