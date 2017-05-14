@@ -1,62 +1,107 @@
+#define _POSIX_C_SOURCE 1
+
+#include "parser/parser_tp0.h"
 #include "base64.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include <unistd.h>
+
+#define HELP_FILE "help.txt"
+#define VERSION "2.1.3"
+#define STDIN_FD 0
+#define STDOUT_FD 1
+
+#define SOURCE_CODE_SIZE_ENCODE 3
+#define RESULT_SIZE_ENCODE 4
+
+#define SOURCE_CODE_SIZE_DECODE 4
+#define RESULT_SIZE_DECODE 3
+
+#define VERSION_MSG "Version %s\n"
+#define ARGUMENT_ERROR_MSG "ARGUMENT ERROR\n"
+#define INPUT_OPENING_ERROR_MSG "ERROR OPENING INPUT FILE \n"
+#define OUTPUT_OPENING_ERROR_MSG "ERROR OPENING OUTPUT FILE \n"
+
+#define STD_FILE_SYMBOL "-"
+
+#define NO_ERROR_CODE 0
+#define DECODING_ERROR_CODE 1
+#define FILE_WRITING_ERROR_CODE 2
+#define FILE_READING_ERROR_CODE 3
+
+#define DECODING_ERROR_MSG "DECODING ERROR"
+#define FILE_WRITING_ERROR_MSG "ERROR WRITING IN FILE"
+#define FILE_READING_ERROR_MSG "ERROR READING FROM FILE"
+
+extern int base64_encode(int fd_in, int fd_out);
+extern int base64_decode(int fd_in, int fd_out);
+
 const char* errmsg[3] = {DECODING_ERROR_MSG, FILE_WRITING_ERROR_MSG, FILE_READING_ERROR_MSG};
 
-
-bool base64_encode(const unsigned char* src, unsigned char* result, int char_to_encode){
-    result[0] = (src[0] & 0xfc) >> 2;
-    result[1] = ((src[0] & 0x03) << 4) + ((src[1] & 0xf0) >> 4);
-    result[2] = ((src[1] & 0x0f) << 2) + ((src[2] & 0xc0) >> 6);
-    result[3] = src[2] & 0x3f;
-    for (int i = 0; i < char_to_encode+1; ++i) {
-            result[i] = base64_table[result[i]];
-    }
-    for(int j = char_to_encode+1; j < 4; j++){
-        result[j] = EMPTYBASE64;
-    }
-    return true;
+void print_help(){
+	FILE* help_file = fopen(HELP_FILE, "r");
+	char c = fgetc(help_file);
+	while (c != EOF){
+		printf("%c", c);
+		c = fgetc(help_file);
+	}
+	printf("\n");
+	fclose(help_file);
 }
 
-bool base64_decode(const unsigned char* src, unsigned char* result, int* write){
-    char tmp[4];
-    int char_to_write = 0;
+void print_version(){
+	printf(VERSION_MSG, VERSION);
+}
 
-    for (int i = 0; i < 4; ++i) {
-        tmp[i] = src[i];
-    }
+FILE* get_input_file(char* input){
+	if (!input || !strcmp(input, STD_FILE_SYMBOL))
+		return stdin;
+	return fopen(input, "rb");
+}
 
-    for (int i = 0; i < 4; ++i){
-        if(tmp[i] == EMPTYBASE64){
-            tmp[i] = EMPTYBASE256;
-        }
-        else {
-            if (tmp[i] >= A_ASCII && tmp[i] <= Z_ASCII) {
-                tmp[i] -= OFFSET1;
-            }
-            else if (tmp[i] >= A_MIN_ASCII && tmp[i] <= Z_MIN_ASCII) {
-                tmp[i] -= OFFSET2;
-            }
-            else if (tmp[i] >= ZERO_ASCII && tmp[i] <= NINE_ASCII) {
-                tmp[i] += OFFSET3;
-            }
+FILE* get_output_file(char* output){
+	if (!output || !strcmp(output, STD_FILE_SYMBOL))
+		return stdout;
+	return fopen(output, "wb");
+}
 
-            else if (tmp[i] == PLUS) {
-                tmp[i] = PLUSB64;
-            }
-            else if (tmp[i] == SLASH) {
-                tmp[i] = SLASHB64;
-            }
-            else{
-                return false;
-            }
-            char_to_write++;
-        }
+void close_files(FILE* input, FILE* output){
+	if (input != stdin)
+		fclose(input);
+	if (output != stdout)
+		fclose(output);
+}
 
-    }
-
-    result[0] = (tmp[0] << 2) + ((tmp[1] & 0x30) >> 4);
-    result[1] = ((tmp[1] & 0xf) << 4) + ((tmp[2] & 0x3c) >> 2);
-    result[2] = ((tmp[2] & 0x3) << 6) + tmp[3];
-
-    *write = char_to_write-1;
-    return true;
+int main(int argc, char* argv[]){
+	run_data_t* rd = malloc(sizeof(run_data_t));
+	parse_cmd(rd, argc, argv);
+	if (rd->print_help)
+		print_help();
+	if (rd->print_version){
+		print_version();
+		return 0;
+	}
+	FILE* input_file = get_input_file(rd->input);
+	if (! input_file) {
+		fprintf(stderr, INPUT_OPENING_ERROR_MSG);
+		return 0;
+	}
+	FILE* output_file = get_output_file(rd->output);
+	if (! output_file) {
+		fprintf(stderr, OUTPUT_OPENING_ERROR_MSG);
+		close_files(input_file, output_file);
+		return 0;
+	}
+	int res = 0;
+	if (rd->is_decode) res = 0;//base64_decode(fileno(input_file), fileno(output_file));
+	else if(!rd->error_flag){
+		printf("Estoy por encodear\n");
+		res = base64_encode(fileno(input_file), fileno(output_file));
+		printf("Ya encodee\n");
+	}
+	else fprintf(stderr, ARGUMENT_ERROR_MSG);
+	if (res != 0) fprintf(stderr, "%s\n", errmsg[res-1]);
+	close_files(input_file, output_file);
+	free(rd);
+	return 0;
 }
