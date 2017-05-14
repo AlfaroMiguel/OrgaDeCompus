@@ -38,7 +38,6 @@ extern int base64_decode(int fd_in, int fd_out);
 
 const char* errmsg[3] = {DECODING_ERROR_MSG, FILE_WRITING_ERROR_MSG, FILE_READING_ERROR_MSG};
 
-
 void print_help(){
 	FILE* help_file = fopen(HELP_FILE, "r");
 	char c = fgetc(help_file);
@@ -73,63 +72,6 @@ void close_files(FILE* input, FILE* output){
 		fclose(output);
 }
 
-// int encode(int input_file, int output_file){
-// 	unsigned char source_code[SOURCE_CODE_SIZE_ENCODE];
-// 	unsigned char result[RESULT_SIZE_ENCODE];
-// 	int i, char_to_encode, bytes_written;
-// 	char buffer[1];
-// 	int bytes_read = read(input_file, buffer, 1);
-// 	while (buffer[0] != EOF){
-// 		i = 0;
-//         char_to_encode = 0;
-// 		while (i < 3){
-// 			source_code[i] = buffer[0];
-// 			i++;
-//             char_to_encode++;
-// 			bytes_read = read(input_file, buffer, 1);
-//             if(buffer[0] == EOF) break;
-// 		}
-// 		while (i < 3){
-// 			source_code[i] = '\0';
-// 			i++;
-// 		}
-// 		base64_encode(source_code, result, char_to_encode);
-// 		bytes_written = write(output_file, result, 4);
-// 		if (bytes_written == 0) return FILE_WRITING_ERROR_CODE;
-// 	}
-
-// 	if(bytes_read == -1) return FILE_READING_ERROR_CODE; 
-// 	return NO_ERROR_CODE;
-// }
-
-// int decode(int input_file, int output_file){
-// 	unsigned char source_code[SOURCE_CODE_SIZE_DECODE];
-// 	unsigned char result[RESULT_SIZE_DECODE];
-// 	int i, bytes_write, bytes_written;
-// 	char buffer[1];
-// 	int bytes_read = read(input_file, buffer, 1);
-// 	while ((int)buffer[0] != EOF){
-// 		i = 0;
-// 		while (i < 4){
-// 			source_code[i] = (int)buffer[0];
-// 			i++;
-// 			bytes_read = read(input_file, buffer, 1);
-//             if((int)buffer[0] == EOF) break;
-// 		}
-// 		while (i < 4){
-// 			source_code[i] = '=';
-// 			i++;
-// 		}
-// 		bool success = base64_decode(source_code, result, &bytes_write);
-// 		if (!success) return DECODING_ERROR_CODE;
-//         bytes_written = write(output_file, result, bytes_write);
-//         if (bytes_written == 0) return FILE_WRITING_ERROR_CODE;
-// 	}
-
-// 	if(bytes_read == -1) return FILE_READING_ERROR_CODE;
-// 	return NO_ERROR_CODE;
-// }
-
 int main(int argc, char* argv[]){
 	run_data_t* rd = malloc(sizeof(run_data_t));
 	parse_cmd(rd, argc, argv);
@@ -151,11 +93,9 @@ int main(int argc, char* argv[]){
 		return 0;
 	}
 	int res = 0;
-	if (rd->is_decode) res = base64_decode(fileno(input_file), fileno(output_file));
+	if (rd->is_decode) res = 0;//base64_decode(fileno(input_file), fileno(output_file));
 	else if(!rd->error_flag){
-		printf("Estoy por encodear\n");
 		res = base64_encode(fileno(input_file), fileno(output_file));
-		printf("Ya encodee\n");
 	}
 	else fprintf(stderr, ARGUMENT_ERROR_MSG);
 	if (res != 0) fprintf(stderr, "%s\n", errmsg[res-1]);
