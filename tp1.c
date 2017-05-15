@@ -93,7 +93,7 @@ int main(int argc, char* argv[]){
 		return 0;
 	}
 	int res = 0;
-	if (rd->is_decode) res = 0;//base64_decode(fileno(input_file), fileno(output_file));
+	if (rd->is_decode) res = base64_decode(fileno(input_file), fileno(output_file));
 	else if(!rd->error_flag){
 		res = base64_encode(fileno(input_file), fileno(output_file));
 	}
