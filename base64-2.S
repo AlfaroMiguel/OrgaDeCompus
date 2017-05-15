@@ -163,10 +163,16 @@ d_leer:
             lw t4, 0(t2)        	#t4 = 4 bytes (IMPORTANTE: buffer[0] es t4 & 0xFF)
 
 			beqz v0, d_fin  		#read = 0 => EOF
-			bltu v0,4,decode_error	#si no leyo 4 bytes devolver error siempre
+			bltu v0,4,decode_error2	#si no leyo 4 bytes devolver error siempre
 
 			li t5, 0				#IDX = 0
 			li t3, 0				#tmp
+			j	d_loop		#DEBUG
+#DEBUG
+decode_error2:
+			j d_fin
+#end:DEBUG
+
 d_loop:		
 			beq t5,v0,d_formateo	#if (IDX== retval(read)) ya se trato todos los B leidos
 			sll t6,t5,3				#t6 = t5 * 8	
@@ -202,7 +208,7 @@ sigue4:		bne t2,SLASH,decode_error
 			j d_fin_loop1
 
 decode_error:		
-			li v0,1
+			li v0,0xffffffff
 			j d_fin
 
 d_fin_loop1:	
