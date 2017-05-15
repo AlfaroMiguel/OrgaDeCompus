@@ -167,48 +167,49 @@ d_leer:
 
 			li t5, 0				#IDX = 0
 			li t3, 0				#tmp
+			j	d_loop		#DEBUG
+
 d_loop:		
-			beq t5,v0,d_formateo	#if (IDX== retval(read)) ya se trato todos los B leidos
+			beq t5,v0,d_formateo	#DEBUG	
 			sll t6,t5,3				#t6 = t5 * 8	
 			srl	t2,t4,t6			#t2 = t4 >> IDX = buffer[IDX]
 			andi t2,t2,0xff			#solo me quedo con ese B
 			
 			bne t2,EMPTYBASE64,sigue0
 			li	t2,EMPTYBASE256
-			j d_fin_loop2
+			j d_fin_loop
 			
 sigue0:		bltu t2,A_ASCII,sigue1
 			bgtu t2,Z_ASCII,sigue1
 			subu t2,t2,OFFSET1
-			j d_fin_loop1
+			j d_fin_loop
 
 sigue1:		bltu t2,A_MIN_ASCII,sigue2
 			bgtu t2,Z_MIN_ASCII,sigue2
 			subu t2,t2,OFFSET2
-			j d_fin_loop1
+			j d_fin_loop
 
 sigue2:		bltu t2,ZERO_ASCII,sigue3
 			bgtu t2,NINE_ASCII,sigue3
 			subu t2,t2,OFFSET3
-			j d_fin_loop1
+			j d_fin_loop
 
 sigue3:		bne t2,PLUS,sigue4
 			li	t7,PLUSB64
 			move t2,t7
-			j d_fin_loop1
+			j d_fin_loop
 
 sigue4:		bne t2,SLASH,decode_error
 			li	t2,SLASHB64
-			j d_fin_loop1
+			j d_fin_loop
 
 decode_error:		
-			li v0,1
+			li v0,0xffffffff
 			j d_fin
 
-d_fin_loop1:	
-			addiu t3,t3,1
-
-d_fin_loop2:	
+d_fin_loop:	
+			#li t7,24		#si hiciera falta invertir el orden de t3 por alguna razon
+			#subu t6,t7,t6	
 			sll	t2,t2,t6
 			or	t3,t3,t2			
 			addiu t5,t5,1
@@ -219,12 +220,16 @@ d_fin_loop2:
 #no usar t0 y t1?
 #a1 es &buffer
 
+#    result[0] = (tmp[0] << 2) + ((tmp[1] & 0x30) >> 4)
+#    result[1] = ((tmp[1] & 0xf) << 4) + ((tmp[2] & 0x3c) >> 2)
+#    result[2] = ((tmp[2] & 0x3) << 6) + tmp[3]
+
 d_formateo:
 			andi t2,t3,0xff		#t2=tmp[0]
 			sll	t2,t2,2	
 			srl	t4,t3,12		#t4=tmp[1]>>4	
 			andi t4,t4,0x3		#t4 &= 0x3
-			and	t2,t2,t4
+			addu t2,t2,t4
 			sb	t2,0(a1)		#buffer[0]=t2
 
 #tras esto buffer[0] = | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 |
@@ -234,7 +239,7 @@ d_formateo:
 			andi t2,t2,0xf0		#t2=(tmp[1] & 0xf) <<4
 			srl t4,t3,18
 			andi t4,t4,0xf		#t4= (tmp[2] >> 2) & 0xf
-			and	t2,t2,t4
+			addu t2,t2,t4
 			sb	t2,1(a1)		#buffer[1]=t2
 
 #tras esto buffer[1] = | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 |
@@ -244,7 +249,7 @@ d_formateo:
 			and t2,t3,t2
 			srl t2,t2,10		#t2=(tmp[2] & 0x3) <<6
 			srl t4,t3,24		#t4=tmp[3]
-			and t2,t2,t4
+			addu t2,t2,t4
 			sb t2,2(a1)			#buffer[2]=t2
 	
 #tras esto buffer[2] = | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 |

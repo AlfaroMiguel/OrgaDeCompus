@@ -98,7 +98,7 @@ int main(int argc, char* argv[]){
 		res = base64_encode(fileno(input_file), fileno(output_file));
 	}
 	else fprintf(stderr, ARGUMENT_ERROR_MSG);
-	if (res != 0) fprintf(stderr, "%d\n", res);
+	if (res != 0) fprintf(stderr, "%x\n", res);
 	close_files(input_file, output_file);
 	free(rd);
 	return 0;
