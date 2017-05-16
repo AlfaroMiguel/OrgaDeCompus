@@ -13,7 +13,8 @@ TPs - Organización de computadoras - 1er Cuatrimestre 2017
   - [ ] Cambios en el main
   - [ ] Assembly de encode
   - [ ] Assembly de decode
-- [x] Informe https://www.overleaf.com/8715138fyzktgmsrwqc
+- [x] Informe TP0 https://www.overleaf.com/8715138fyzktgmsrwqc
+- [ ] Informe TP1 https://www.overleaf.com/9580983spqfnfhnpdbn
 
 
 Como ejecutar el "maravilloso" emulador y probar el programa for dummies:
