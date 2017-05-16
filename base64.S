@@ -191,7 +191,7 @@ sigue1:		bltu t2,A_MIN_ASCII,sigue2
 
 sigue2:		bltu t2,ZERO_ASCII,sigue3
 			bgtu t2,NINE_ASCII,sigue3
-			subu t2,t2,OFFSET3
+			addiu t2,t2,OFFSET3
 			j d_fin_loop
 
 sigue3:		bne t2,PLUS,sigue4

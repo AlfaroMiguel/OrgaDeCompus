@@ -181,7 +181,7 @@ d_formateo2:
 
 
 d_loop:		
-			beq t5,v0,d_formateo	#DEBUG	
+			beq t5,v0,d_formateo2	#DEBUG	
 			sll t6,t5,3				#t6 = t5 * 8	
 			srl	t2,t4,t6			#t2 = t4 >> IDX = buffer[IDX]
 			andi t2,t2,0xff			#solo me quedo con ese B
@@ -202,7 +202,7 @@ sigue1:		bltu t2,A_MIN_ASCII,sigue2
 
 sigue2:		bltu t2,ZERO_ASCII,sigue3
 			bgtu t2,NINE_ASCII,sigue3
-			subu t2,t2,OFFSET3
+			addiu t2,t2,OFFSET3
 			j d_fin_loop
 
 sigue3:		bne t2,PLUS,sigue4
