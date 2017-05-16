@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <ctype.h>
+#include <stdbool.h>
 
 #define HELP_FILE "help.txt"
 #define VERSION "2.1.3"
@@ -33,8 +35,6 @@
 #define FILE_WRITING_ERROR_MSG "ERROR WRITING IN FILE"
 #define FILE_READING_ERROR_MSG "ERROR READING FROM FILE"
 
-extern int base64_encode(int fd_in, int fd_out);
-extern int base64_decode(int fd_in, int fd_out);
 
 const char* errmsg[3] = {DECODING_ERROR_MSG, FILE_WRITING_ERROR_MSG, FILE_READING_ERROR_MSG};
 

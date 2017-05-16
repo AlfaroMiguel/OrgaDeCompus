@@ -1,6 +1,7 @@
 #include <mips/regdef.h>
 #include <sys/syscall.h>
 
+
 #define EMPTYBASE256  0
 #define EMPTYBASE64 61
 #define PLUS 43
@@ -204,12 +205,10 @@ sigue4:		bne t2,SLASH,decode_error
 			j d_fin_loop
 
 decode_error:		
-			li v0,0xffffffff
+			li v0,1
 			j d_fin
 
 d_fin_loop:	
-			#li t7,24		#si hiciera falta invertir el orden de t3 por alguna razon
-			#subu t6,t7,t6	
 			sll	t2,t2,t6
 			or	t3,t3,t2			
 			addiu t5,t5,1
@@ -217,7 +216,6 @@ d_fin_loop:
 
 #t5 es la cantidad de Bytes leidos (ahora es igual a v0)
 #t3 es tmp
-#no usar t0 y t1?
 #a1 es &buffer
 
 #    result[0] = (tmp[0] << 2) + ((tmp[1] & 0x30) >> 4)
@@ -278,3 +276,4 @@ d_fin:
 .align 2
 buffer: .space 4
 tabla: .ascii "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/="
+
