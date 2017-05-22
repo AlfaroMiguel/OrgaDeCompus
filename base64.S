@@ -58,6 +58,8 @@ leer:
               li v0, SYS_read      # se guarda en v0 el codigo del system call
               syscall
 
+              bnez a3, e_error_lectura #(a3!=0) => error_lectura
+
               la t2, buffer       #t2 = buffer
               la t3, tabla        #t3 = tabla
 
@@ -126,8 +128,19 @@ imprimir:
               li a2, 4             # a2 = bytes a escribir
               li v0, SYS_write     # Indicamos que queremos llamar a la syscall write
               syscall
+
+              bnez a3, e_error_escritura  #(a3!=0) => error_escritura
+
               sw zero, buffer      #limpio el buffer
               j leer               # leo de nuevo
+
+e_error_escritura:
+              li v0, 2 #v0 = indice del mensaje en el arreglo en tp1.c
+              j fin
+
+e_error_lectura:
+              li v0, 3 #v0 = indice del mensaje en el arreglo en tp1.c
+              j fin
 
 fin:
               lw ra,32(sp)
@@ -158,6 +171,8 @@ d_leer:
             li a2, 4            	# leo 4 bytes
             li v0, SYS_read      	# se guarda en v0 el codigo del system call
             syscall
+
+            bnez a3, d_error_lectura #(a3!=0) => error lectura
 
             la t2, buffer       	#t2 = buffer
 
@@ -259,11 +274,24 @@ d_imprimir:
             li a2, 3            #a2 = bytes a escribir
             li v0, SYS_write     
             syscall
+
+            bnez a3, d_error_escritura #(a3!=0) => error escritura
+
             sw zero, buffer     #limpio el buffer
             j d_leer            # leo de nuevo
 
 #si vengo de error ya cargo v0 con 1
 #si leyo 0 del read entonces v0 ya es 0
+
+d_error_escritura:
+              li v0, 2 #v0 = indice del mensaje en el arreglo en tp1.c
+              j d_fin
+
+d_error_lectura:
+              li v0, 3 #v0 = indice del mensaje en el arreglo en tp1.c
+              j d_fin
+
+
 d_fin:
             lw ra,32(sp)
             lw $fp,28(sp)
