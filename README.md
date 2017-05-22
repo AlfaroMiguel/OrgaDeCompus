@@ -27,7 +27,6 @@ TPs - Organización de computadoras - 1er Cuatrimestre 2017
                00000003
                
   - [ ] Chequear errores de I/O
-  
   - [ ] Problema en parsing de parámetros
   
              root@:~/2017q1/alfaro# ./tp1 -h
