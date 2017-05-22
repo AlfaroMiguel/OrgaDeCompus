@@ -10,11 +10,11 @@ TPs - Organización de computadoras - 1er Cuatrimestre 2017
 
 - [x] TP0
 - [ ] TP1 (FIX!)
-  - [x] Cambios en el main
-  - [x] Assembly de encode
-  - [x] Assembly de decode
-  - [ ] Indicar como compilar
-  - [ ] Revisar el caso que no funciona de decode (agrega ceros de mas)
+ - [x] Cambios en el main
+ - [x] Assembly de encode
+ - [x] Assembly de decode
+ - [ ] Indicar como compilar
+ - [ ] Revisar el caso que no funciona de decode (agrega ceros de mas)
   
                root@:~/2017q1/alfaro# hexdump -C in.bin
                00000000  62                                                |b|
