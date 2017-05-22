@@ -10,6 +10,9 @@ TPs - Organización de computadoras - 1er Cuatrimestre 2017
 
 - [x] TP0
 - [ ] TP1 (FIX!)
+
+---
+
 - [x] Cambios en el main
 - [x] Assembly de encode
 - [x] Assembly de decode
@@ -31,6 +34,8 @@ TPs - Organización de computadoras - 1er Cuatrimestre 2017
   
              root@:~/2017q1/alfaro# ./tp1 -h
              Segmentation fault (core dumped)
+  
+---  
   
 - [x] Informe TP0 https://www.overleaf.com/8715138fyzktgmsrwqc
 - [ ] Informe TP1 https://www.overleaf.com/9580983spqfnfhnpdbn
