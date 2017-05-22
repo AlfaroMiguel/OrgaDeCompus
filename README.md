@@ -16,7 +16,7 @@ TPs - Organización de computadoras - 1er Cuatrimestre 2017
 - [x] Cambios en el main
 - [x] Assembly de encode
 - [x] Assembly de decode
-- [ ] Indicar como compilar
+- [x] Indicar como compilar
 - [ ] Revisar el caso que no funciona de decode (agrega ceros de mas)
   
                root@:~/2017q1/alfaro# hexdump -C in.bin
@@ -29,8 +29,8 @@ TPs - Organización de computadoras - 1er Cuatrimestre 2017
                00000000  62 00 00                                          |b..|
                00000003
                
-- [ ] Chequear errores de I/O
-- [ ] Problema en parsing de parámetros
+- [x] Chequear errores de I/O
+- [x] Problema en parsing de parámetros (Lo probé y no me saltó)
   
              root@:~/2017q1/alfaro# ./tp1 -h
              Segmentation fault (core dumped)
