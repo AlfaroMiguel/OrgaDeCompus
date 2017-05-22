@@ -9,10 +9,29 @@ TPs - Organización de computadoras - 1er Cuatrimestre 2017
 :pushpin:Done
 
 - [x] TP0
-- [ ] TP1
-  - [ ] Cambios en el main
-  - [ ] Assembly de encode
-  - [ ] Assembly de decode
+- [ ] TP1 (FIX!)
+  - [x] Cambios en el main
+  - [x] Assembly de encode
+  - [x] Assembly de decode
+  - [ ] Indicar como compilar
+  - [ ] Revisar el caso que no funciona de decode (agrega ceros de mas)
+  
+               root@:~/2017q1/alfaro# hexdump -C in.bin
+               00000000  62                                                |b|
+               00000001
+               root@:~/2017q1/alfaro# hexdump -C out.b64
+               00000000  59 67 3d 3d                                       |Yg==|
+               00000004
+               root@:~/2017q1/alfaro# hexdump -C out.bin
+               00000000  62 00 00                                          |b..|
+               00000003
+               
+  - [ ] Chequear errores de I/O
+  - [ ] Problema en parsing de parámetros
+  
+             root@:~/2017q1/alfaro# ./tp1 -h
+             Segmentation fault (core dumped)
+  
 - [x] Informe TP0 https://www.overleaf.com/8715138fyzktgmsrwqc
 - [ ] Informe TP1 https://www.overleaf.com/9580983spqfnfhnpdbn
 
