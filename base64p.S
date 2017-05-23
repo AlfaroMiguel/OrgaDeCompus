@@ -183,8 +183,7 @@ d_leer:
 
 			li t5, 0				#IDX = 0
 			li t3, 0				#tmp
-			li t0, 4
-			j	d_loop		#DEBUG
+			li t0, 0
 
 d_loop:		
 			beq t5,v0,d_formateo	
@@ -194,7 +193,7 @@ d_loop:
 			
 			bne t2,EMPTYBASE64,sigue0
 			li	t2,EMPTYBASE256
-			move t0,t5				#t0=bytes leidos padding
+			addiu t0,t0,1				#t0=bytes leidos padding
 			j d_fin_loop
 			
 sigue0:		bltu t2,A_ASCII,sigue1
@@ -271,9 +270,8 @@ d_formateo:
 #tras esto buffer[2] = | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 |
 #				   |tmp[2][0:1]|      tmp[3][0:5]	   |	
 
-
 			bgtu t0,0,d_imprimir
-			addiu t0,t0,1		#si t0=0 debe imprimir 3 caracteres, recordar t0 € [0;4]
+			li t0,1		#si t0=0 debe imprimir 3 caracteres, recordar t0 € [0;4]
 d_imprimir:
             lw a0, 44(sp)       #a0 = fd_out
             la a1, buffer       #a1 = direccion del buffer a escribir
