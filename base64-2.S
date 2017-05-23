@@ -1,6 +1,7 @@
 #include <mips/regdef.h>
 #include <sys/syscall.h>
 
+
 #define EMPTYBASE256  0
 #define EMPTYBASE64 61
 #define PLUS 43
@@ -56,6 +57,8 @@ leer:
               li a2, 3             # leo 3 bytes
               li v0, SYS_read      # se guarda en v0 el codigo del system call
               syscall
+
+              bnez a3, e_error_lectura #(a3!=0) => error_lectura
 
               la t2, buffer       #t2 = buffer
               la t3, tabla        #t3 = tabla
@@ -125,8 +128,19 @@ imprimir:
               li a2, 4             # a2 = bytes a escribir
               li v0, SYS_write     # Indicamos que queremos llamar a la syscall write
               syscall
+
+              bnez a3, e_error_escritura  #(a3!=0) => error_escritura
+
               sw zero, buffer      #limpio el buffer
               j leer               # leo de nuevo
+
+e_error_escritura:
+              li v0, 2 #v0 = indice del mensaje en el arreglo en tp1.c
+              j fin
+
+e_error_lectura:
+              li v0, 3 #v0 = indice del mensaje en el arreglo en tp1.c
+              j fin
 
 fin:
               lw ra,32(sp)
@@ -149,7 +163,7 @@ base64_decode:
             sw $fp,28(sp)      
             move $fp,sp        
             sw a0,40(sp)    	    
-            sw a1,44(sp)        	
+            sw a1,44(sp)  	
 
 d_leer:
             lw a0, 40(sp)        	# fd = fd_in
@@ -158,36 +172,28 @@ d_leer:
             li v0, SYS_read      	# se guarda en v0 el codigo del system call
             syscall
 
+            bnez a3, d_error_lectura #(a3!=0) => error lectura
+
             la t2, buffer       	#t2 = buffer
 
             lw t4, 0(t2)        	#t4 = 4 bytes (IMPORTANTE: buffer[0] es t4 & 0xFF)
 
 			beqz v0, d_fin  		#read = 0 => EOF
-			bltu v0,4,decode_error2	#si no leyo 4 bytes devolver error siempre
+			bltu v0,4,decode_error	#si no leyo 4 bytes devolver error siempre
 
 			li t5, 0				#IDX = 0
 			li t3, 0				#tmp
-			j	d_loop		#DEBUG
-#DEBUG
-decode_error2:
-			j d_fin
-
-
-d_formateo2:
-			move v0,t3
-			j d_fin
-
-#end:DEBUG
-
+			li t0, 0
 
 d_loop:		
-			beq t5,v0,d_formateo2	#DEBUG	
+			beq t5,v0,d_formateo	
 			sll t6,t5,3				#t6 = t5 * 8	
 			srl	t2,t4,t6			#t2 = t4 >> IDX = buffer[IDX]
 			andi t2,t2,0xff			#solo me quedo con ese B
 			
 			bne t2,EMPTYBASE64,sigue0
 			li	t2,EMPTYBASE256
+			addiu t0,t0,1				#t0=bytes leidos padding
 			j d_fin_loop
 			
 sigue0:		bltu t2,A_ASCII,sigue1
@@ -215,12 +221,10 @@ sigue4:		bne t2,SLASH,decode_error
 			j d_fin_loop
 
 decode_error:		
-			li v0,0xffffffff
+			li v0,1
 			j d_fin
 
 d_fin_loop:	
-			#li t7,24		#si hiciera falta invertir el orden de t3 por alguna razon
-			#subu t6,t7,t6	
 			sll	t2,t2,t6
 			or	t3,t3,t2			
 			addiu t5,t5,1
@@ -228,8 +232,8 @@ d_fin_loop:
 
 #t5 es la cantidad de Bytes leidos (ahora es igual a v0)
 #t3 es tmp
-#no usar t0 y t1?
 #a1 es &buffer
+#t0 es cantidad de bytes padding leidos
 
 #    result[0] = (tmp[0] << 2) + ((tmp[1] & 0x30) >> 4)
 #    result[1] = ((tmp[1] & 0xf) << 4) + ((tmp[2] & 0x3c) >> 2)
@@ -266,18 +270,36 @@ d_formateo:
 #tras esto buffer[2] = | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 |
 #				   |tmp[2][0:1]|      tmp[3][0:5]	   |	
 
+			bgtu t0,0,d_imprimir
+			li t0,1		#si t0=0 debe imprimir 3 caracteres, recordar t0 € [0;4]
 d_imprimir:
             lw a0, 44(sp)       #a0 = fd_out
             la a1, buffer       #a1 = direccion del buffer a escribir
-            li a2, 3            #a2 = bytes a escribir
+			li t2, 4
+            subu a2,t2,t0            #a2 = 4 - t0 bytes a escribir
+			move s1,a2
             li v0, SYS_write     
             syscall
+
+            bnez a3, d_error_escritura #(a3!=0) => error escritura
+
             sw zero, buffer     #limpio el buffer
             j d_leer            # leo de nuevo
 
 #si vengo de error ya cargo v0 con 1
 #si leyo 0 del read entonces v0 ya es 0
+
+d_error_escritura:
+              li v0, 2 #v0 = indice del mensaje en el arreglo en tp1.c
+              j d_fin
+
+d_error_lectura:
+              li v0, 3 #v0 = indice del mensaje en el arreglo en tp1.c
+              j d_fin
+
+
 d_fin:
+			move v0,s1
             lw ra,32(sp)
             lw $fp,28(sp)
             addu sp,sp,40
@@ -289,3 +311,4 @@ d_fin:
 .align 2
 buffer: .space 4
 tabla: .ascii "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/="
+
