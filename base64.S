@@ -183,7 +183,7 @@ d_leer:
 
 			li t5, 0				#IDX = 0
 			li t3, 0				#tmp
-			j	d_loop		#DEBUG
+			li t0, 0				#cant paddings leidos, <=2 por precond
 
 d_loop:		
 			beq t5,v0,d_formateo	#DEBUG	
@@ -193,6 +193,7 @@ d_loop:
 			
 			bne t2,EMPTYBASE64,sigue0
 			li	t2,EMPTYBASE256
+			addiu t0,t0,1
 			j d_fin_loop
 			
 sigue0:		bltu t2,A_ASCII,sigue1
@@ -268,10 +269,12 @@ d_formateo:
 #tras esto buffer[2] = | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 |
 #				   |tmp[2][0:1]|      tmp[3][0:5]	   |	
 
+
 d_imprimir:
             lw a0, 44(sp)       #a0 = fd_out
             la a1, buffer       #a1 = direccion del buffer a escribir
             li a2, 3            #a2 = bytes a escribir
+			subu a2,a2,t0		#a2 = 3 - cant paddings
             li v0, SYS_write     
             syscall
 
